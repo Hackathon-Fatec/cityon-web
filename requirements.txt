@@ -1,3 +1,5 @@
 streamlit
 Pillow
 pandas
+psycopg2
+psycopg2-binary
