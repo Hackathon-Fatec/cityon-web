@@ -1,5 +1,6 @@
 import streamlit as st
 import os as os
+from list_feedback import get_cities
 
 st.title("Cadastre Feedback")
 
@@ -13,20 +14,27 @@ if fileupload is not None:
 
     st.image(fileupload.name, width=100)
 
-col1, col2, col3 = st.columns(3)
 
+
+col1, col2, col3 = st.columns(3)
 with col1:
-   st.text_input("Your name", "Bard")
+    st.selectbox("Cidade do Local", get_cities())
 
 with col2:
-   st.text_input("Your name", "Bard2")
+   st.text_input("CEP", "")
 
-with col3:
-   st.text_input("Your name", "Bard3")
+
+
+st.text_input("Rua", "")
+
+txt_area = st.text_area("Descreva sobre esse local", "")
+cont = len(txt_area)
+
+st.write("Quantidade de caracteries: ", cont)
+
+
 
 submit = st.button("enviar")
-
-
 
 #apaga foto do arquivo após ser enviada
 if(submit):
