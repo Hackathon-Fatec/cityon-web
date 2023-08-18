@@ -22,7 +22,7 @@ def get_itens(city):
     except psycopg2.Error as e:
         return False
 
-def insert_itens(name, picture, city, street, opinion):
+def insert_itens(name, picture, city, street, opinion, sentiment, data):
     try:
         connection = psycopg2.connect(
             dbname="postgres",
@@ -32,8 +32,8 @@ def insert_itens(name, picture, city, street, opinion):
         )
 
         cursor = connection.cursor()
-        query = "INSERT INTO posts(nome, foto, cidade, endereco, opiniao) VALUES (%s, %s, %s, %s, %s);"
-        data = (name, picture, city, street, opinion)
+        query = "INSERT INTO posts(nome, foto, cidade, endereco, opiniao, sentiment) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+        data = (name, picture, city, street, opinion, sentiment, data)
 
         cursor.execute(query, data)
         connection.commit()
