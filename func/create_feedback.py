@@ -25,10 +25,10 @@ with city:
 with name:
     nome = st.text_input("Seu nome", "")
 
-street = st.text_input("Rua", "")
+    street = st.text_input("Rua", "")
 
-opinion = st.text_area("Descreva sobre esse local", "")
-cont = len(opinion)
+    opinion = st.text_area("Descreva sobre esse local", "")
+    cont = len(opinion)
 
 st.write("Quantidade de caracteries: ", cont)
 
