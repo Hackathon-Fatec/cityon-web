@@ -4,7 +4,10 @@ import os
 from get_cities import get_cities
 import psycopg2
 from db import insert_itens
+from transformers import pipeline
+from googletrans import Translator
 
+pipe = pipeline(model="cardiffnlp/twitter-roberta-base-sentiment-latest")
 
 st.title("Cadastre Feedback")
 
@@ -45,8 +48,14 @@ if(submit):
     hash_img = psycopg2.Binary(imagem_data)
     
     if hash_img and city and street and opinion:
-        res = insert_itens(nome, hash_img, cidade, street, opinion)
+        translator = Translator()
+        translated_opinion = translator.translate(opinion, dest="en")
 
+        sentiment = pipe(translated_opinion.text)
+
+        print(translated_opinion.text, sentiment)
+
+        #res = insert_itens(nome, hash_img, cidade, street, opinion, sentiment)
 
     os.remove(caminho)
 
