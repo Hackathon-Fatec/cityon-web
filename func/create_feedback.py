@@ -1,18 +1,12 @@
 import streamlit as st
-from PIL import Image
 import os
 from get_cities import get_cities
 import psycopg2
 from db import insert_itens
-from transformers import pipeline
-from googletrans import Translator
 import datetime
-import time
-from list_feedback import list_feedback
+from predict import predict
 
 def create_feedback():
-    pipe = pipeline(model="distilbert-base-uncased-finetuned-sst-2-english")
-
     st.title("Cadastre Feedback de um Local")
 
     fileupload = st.file_uploader("Foto do local", type=['png', 'jpg'])
@@ -50,9 +44,9 @@ def create_feedback():
             hash_img = psycopg2.Binary(imagem_data)
             
             if hash_img and city and street and opinion and today_data:
-                translator = Translator()
-                translated_opinion = translator.translate(opinion, dest="en")
-                sentiment = pipe(translated_opinion.text)[0]['label']
+
+                sentiment = predict(opinion)
+
                 res = insert_itens(nome, hash_img, cidade, street, opinion, sentiment.title(), str(today_data))
 
                 if res:
