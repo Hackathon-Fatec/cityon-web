@@ -15,7 +15,6 @@ def list_feedback():
     with sentiment:
         sentiment_choosed = st.selectbox('Escolha o sentimento do comentario', ["Positivo", "Negativo", "Todos"])
 
-    # Outside the columns
     st.write("Content outside the cards.")
 
     if st.button("Buscar"):
@@ -48,5 +47,3 @@ def list_feedback():
 
         else:
             st.warning('Nenhum dado encontrado!', icon="⚠️")
-
-list_feedback()
