@@ -1,0 +1,10 @@
+.idea
+.vscode
+venv
+.venv
+.env
+postgres-ca-certificate.crt
+tmp
+data
+venv
+__pycache__
