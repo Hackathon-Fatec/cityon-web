@@ -20,8 +20,6 @@ if fileupload is not None:
         f.write(fileupload.read())
     st.image(fileupload.name, width=100)
 
-
-
 city, name, data = st.columns(3)
 with city:
     cidade = st.selectbox("Cidade do Local", get_cities())
