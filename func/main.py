@@ -10,6 +10,7 @@ def main():
         ("Home", "Listagem de Feedbacks", "Criação de Feedback")
     )
 
+
     if menu == "Listagem de Feedbacks":
         list_feedback()
     elif menu == "Criação de Feedback":
