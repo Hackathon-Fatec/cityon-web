@@ -19,5 +19,5 @@ def predict(opinion):
 
     new_data_transformed = loaded_vectorizer.transform([new_opinion])
     predictions = loaded_model.predict(new_data_transformed)
-
+    
     return "Positive" if predictions[0] == 1 else "Negative"
