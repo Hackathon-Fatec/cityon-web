@@ -17,6 +17,7 @@ import string
 
 df = pd.read_csv('./olist.csv')
 df = df.drop(["review_text", "review_text_tokenized", "polarity", "kfold_rating", "kfold_polarity", "original_index"], axis=1)
+df = df[:40000]
 df.head()
 
 df["rating"] = np.where(df["rating"] < 3, 0, 1)
@@ -55,12 +56,10 @@ vect_uni_cv = CountVectorizer(ngram_range=(1,1), stop_words=stop_words)
 text_vect_uni_cv = vect_uni_cv.fit_transform(df["review_text_processed"])
 
 X_trainUCV, X_testUCV, y_trainUCV, y_testUCV = train_test_split(text_vect_uni_cv, df["rating"], test_size=0.2, random_state=42)
-
 vect_uni_idf = TfidfVectorizer(ngram_range=(1,1), use_idf=True, norm='l2', stop_words=stop_words)
 text_vect_uni_idf = vect_uni_idf.fit_transform(df["review_text_processed"])
 
 X_trainUIDF, X_testUIDF, y_trainUIDF, y_testUIDF = train_test_split(text_vect_uni_idf, df["rating"], test_size=0.2, random_state=42)
-
 rfcUCV = RandomForestClassifier()
 
 rfcUCV.fit(X_trainUCV, y_trainUCV)
@@ -69,7 +68,6 @@ y_predUCV = rfcUCV.predict(X_testUCV)
 acUCV = accuracy_score(y_testUCV, y_predUCV)
 
 print(f'Score Count Vectorizer Random Forest: {acUCV*100:.2f}%')
-
 rfcidf = RandomForestClassifier()
 
 rfcidf.fit(X_trainUIDF, y_trainUIDF)
@@ -96,5 +94,9 @@ acidf = dtridf.score(X_testUCV, y_testUCV)
 print(f'Score TFIDF Decision Tree Classifier: {acidf*100:.2f}%')
 
 import joblib
-model_filename = 'sentiment_analyser.pkl'
-joblib.dump((rfcidf, vect_uni_idf), model_filename)
+
+model_filename = 'sentiment_analyser_model.pkl'
+joblib.dump(rfcidf, model_filename)
+
+model_filename = 'sentiment_analyser_vect.pkl'
+joblib.dump(vect_uni_idf, model_filename)
