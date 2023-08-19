@@ -1,0 +1,11 @@
+streamlit
+Pillow
+pandas
+psycopg2
+psycopg2-binary
+googletrans
+transformers
+googletrans==4.0.0-rc1
+tensorflow
+streamlit-elements==0.1.*
+joblib
