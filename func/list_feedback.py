@@ -48,9 +48,6 @@ def list_feedback():
                           f'<p style = "color: #808080" ><span style="color: white;">Sentimento: </span> {stment}</p>'
                     )
                     st.markdown(texto_description, unsafe_allow_html=True)
-
-                space = '<p style = "color: #4a28ea" > ________________________________________________________________________</p>'
-                st.markdown(space, unsafe_allow_html=True)
                     
 
         else:
