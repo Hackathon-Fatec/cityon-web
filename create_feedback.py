@@ -8,6 +8,7 @@ from predict import predict
 from get_location import get_lat_long, get_user_location, get_location_details, get_map
 from streamlit_folium import folium_static
 
+
 def create_feedback():
     st.title("Cadastre Feedback de um Local")
 

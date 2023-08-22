@@ -6,6 +6,7 @@ import string
 import os
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.download('wordnet')
 
 lemmatizer = WordNetLemmatizer()
 
