@@ -5,6 +5,7 @@ import psycopg2
 from db import insert_itens
 import datetime
 from predict import predict
+from get_location import get_lat_long
 
 def create_feedback():
     st.title("Cadastre Feedback de um Local")
@@ -26,7 +27,7 @@ def create_feedback():
     with data:
         today_data = st.date_input("Data que a foto foi tirada", datetime.date(2023, 8, 18))
 
-    street = st.text_input("Rua", "", placeholder="Rua, Bairro")
+    street = st.text_input("Rua", "", placeholder="Rua")
 
     opinion = st.text_area("Descreva sobre esse local", "", placeholder="Este local é...")
     cont = len(opinion)
@@ -42,12 +43,12 @@ def create_feedback():
                 imagem_data = img_file.read()
 
             hash_img = psycopg2.Binary(imagem_data)
+            latitude, longitude = get_lat_long(street, cidade)
             
-            if hash_img and city and street and opinion and today_data:
+            if hash_img and city and street and opinion and today_data and latitude and longitude:
 
                 sentiment = predict(opinion)
-
-                res = insert_itens(nome, hash_img, cidade, street, opinion, sentiment.title(), str(today_data))
+                res = insert_itens(nome, hash_img, cidade, street, opinion, sentiment.title(), str(today_data), latitude, longitude)
 
                 if res:
                     st.success('Feedback enviado com sucesso!', icon="✅")
@@ -56,7 +57,7 @@ def create_feedback():
                 else:
                     st.error('Não foi possivel enviar o feedback!', icon="🚨")
             else:
-                st.error('Há campos vazios!', icon="🚨")
+                st.error('Não foi possivel enviar o feedback!', icon="🚨")
             os.remove(caminho)
         else:
             st.warning('Adicione uma imagem!', icon="⚠️")
