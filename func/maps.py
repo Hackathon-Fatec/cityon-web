@@ -7,7 +7,6 @@ from folium import IFrame
 plots = get_all_itens()
 markers = [{"lat": element[9], "lon": element[8], "info": element[5], "local": element[1], "sentiment": element[6]} for element in plots]
 
-print(plots)
 def mapPlot():
     st.title("Plotagem dos feedbacks")
     

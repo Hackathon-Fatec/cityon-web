@@ -3,16 +3,16 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import nltk
 import string
-
+import os
 nltk.download('stopwords')
 nltk.download('punkt')
 
 lemmatizer = WordNetLemmatizer()
 
 def predict(opinion):
-    model_filename = "../models/sentiment_analyser_model.pkl"
-    vect_filename = "../models/sentiment_analyser_vect.pkl"
-
+    model_filename = os.path.join(os.getcwd(), "models", "sentiment_analyser_model.pkl")
+    vect_filename = os.path.join(os.getcwd(), "models", "sentiment_analyser_vect.pkl")
+    
     loaded_model = joblib.load(model_filename)
     loaded_vectorizer = joblib.load(vect_filename)
 
