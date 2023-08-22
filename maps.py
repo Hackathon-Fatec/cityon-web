@@ -18,7 +18,10 @@ def mapPlot():
         iframe = IFrame(html=popup_html, width=300, height=150)
         popup = folium.Popup(iframe, max_width=500)
         
-        folium.Marker([marker["lat"], marker["lon"]], popup=popup).add_to(m)
+        marker_color = "green" if marker["sentiment"] == "Positive" else "red"
+        icon = folium.Icon(color=marker_color)
+        
+        folium.Marker([marker["lat"], marker["lon"]], popup=popup, icon=icon).add_to(m)
     
     # Display the map
     folium_static(m)

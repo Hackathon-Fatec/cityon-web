@@ -37,25 +37,30 @@ def create_feedback():
 
     today_data = st.date_input("Data que a foto foi tirada", datetime.date(2023, 8, 18))
 
-    rua = st.text_input("Rua", rua_user_location, placeholder="Rua")
+    rua = st.text_input("Rua", "", placeholder="Rua")
     opinion = st.text_area("Descreva sobre esse local", "", placeholder="Este local é...")
     cont = len(opinion)
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("Obter Localização"):
-            st.warning("Aguarde enquanto obtemos a localização...")
-            latitude_to_map, longitude_to_map = get_lat_long(rua, cidade)
-            st.session_state.latitude = latitude_to_map
-            st.session_state.longitude = longitude_to_map
-            folium_static(get_map(latitude_to_map, longitude_to_map))
-            st.session_state.show_warning = False
+        locate = st.button("Obter Localização")        
     
     with col2:
         submit = st.button("Enviar Feedback")
     
     with col3:    
         st.write("Quantidade de caracteres: ", cont)
+
+    
+    if locate:
+        latitude_to_map, longitude_to_map = get_lat_long(rua, cidade)
+        if latitude_to_map and longitude_to_map:
+            st.session_state.latitude = latitude_to_map
+            st.session_state.longitude = longitude_to_map
+            folium_static(get_map(latitude_to_map, longitude_to_map))
+            st.session_state.show_warning = False
+        else:
+            st.warning('Não foi possivel obter a localização!', icon="⚠️")
 
     if submit:
         if fileupload:
