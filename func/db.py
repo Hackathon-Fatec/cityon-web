@@ -21,6 +21,28 @@ def get_itens(city):
 
     except psycopg2.Error as e:
         return False
+
+def get_all_itens():
+    try:
+        connection = psycopg2.connect(
+            dbname="postgres",
+            user="postgres",
+            password="(CityOn)1234.",
+            host="db.vaedsocphtwkarwvmmtl.supabase.co"
+        )
+
+        cursor = connection.cursor()
+        query = f"SELECT * FROM posts;"
+        cursor.execute(query)
+
+        results = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        
+        return results
+
+    except psycopg2.Error as e:
+        return False
     
 def get_filtred_cities(city, sentiment):
     try:
@@ -44,7 +66,7 @@ def get_filtred_cities(city, sentiment):
     except psycopg2.Error as e:
         return False
 
-def insert_itens(name, picture, city, street, opinion, sentiment, date):
+def insert_itens(name, picture, city, street, opinion, sentiment, date, latitude, longitude):
     try:
         connection = psycopg2.connect(
             dbname="postgres",
@@ -54,8 +76,8 @@ def insert_itens(name, picture, city, street, opinion, sentiment, date):
         )
 
         cursor = connection.cursor()
-        query = "INSERT INTO posts(nome, foto, cidade, endereco, opiniao, sentiment, data) VALUES (%s, %s, %s, %s, %s, %s, %s);"
-        data = (name, picture, city, street, opinion, sentiment, date)
+        query = "INSERT INTO posts(nome, foto, cidade, endereco, opiniao, sentiment, data, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+        data = (name, picture, city, street, opinion, sentiment, date, latitude, longitude)
 
         cursor.execute(query, data)
         connection.commit()
