@@ -5,8 +5,10 @@ import psycopg2
 from db import insert_itens
 import datetime
 from predict import predict
-from get_location import get_lat_long, get_user_location, get_location_details, get_map
+from get_location import obter_localizacao_da_foto, latlong_for_address
+
 from streamlit_folium import folium_static
+
 
 
 def create_feedback():
@@ -14,13 +16,7 @@ def create_feedback():
 
     fileupload = st.file_uploader("Foto do local", type=['png', 'jpg'])
 
-    location_get_from_user = get_user_location()
-    latitude = location_get_from_user[0]
-    longitude = location_get_from_user[1]
-    location_user_details = get_location_details(latitude, longitude)
-    user_location_parts = (str(location_user_details)).split(", ")
-    rua_user_location = user_location_parts[0] if len(user_location_parts) > 0 else ""
-    city_user_location = user_location_parts[1] if len(user_location_parts) > 1 else ""
+    
 
     if fileupload is not None:
         with open(fileupload.name, "wb") as f:
@@ -28,10 +24,7 @@ def create_feedback():
         st.image(fileupload.name, width=100)
 
     cities = get_cities()
-    if city_user_location in cities:
-        cities.remove(city_user_location)
-        cities.insert(0, city_user_location)
-
+   
     cidade = st.selectbox("Cidade do Local", cities)
     nome = st.text_input("Nome do local", "", placeholder="Praça da Sé")
 

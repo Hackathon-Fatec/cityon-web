@@ -3,6 +3,9 @@ import streamlit as st
 import requests
 import geocoder
 import folium
+from flask import Flask, request, jsonify
+import googlemaps
+from googlemaps.exceptions import TransportError
 
 @st.cache_data
 def get_lat_long(rua, cidade):
@@ -53,4 +56,31 @@ def get_map(lat = -15.7801, lng = -47.9292):
     m = folium.Map(location=[lat, lng], zoom_start=14)
     folium.Marker([lat, lng]).add_to(m)
     return m
+
+
+def get_locale_js():
+    
+    gmaps = googlemaps.Client(key="AIzaSyDds1kIsXkgcg43pme6jvtceszBGpWAKRM")
+
+    try:
+        # Use a função de geolocalização para obter a sua localização atual
+        current_location = gmaps.geolocate()
+
+        # Extraia a latitude e a longitude da resposta
+        latitude = current_location['location']['lat']
+        longitude = current_location['location']['lng']
+
+        data = []
+        data.append(latitude)
+        data.append(longitude)
+        return data
+    
+    except TransportError as e:
+        print(f"Erro ao obter a localização: {e}")
+        return None
+
+        
+
+
+
 
