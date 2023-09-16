@@ -1,86 +1,75 @@
+from PIL import Image
+from PIL.ExifTags import TAGS, GPSTAGS
 from geopy.geocoders import Nominatim
-import streamlit as st
-import requests
-import geocoder
 import folium
-from flask import Flask, request, jsonify
-import googlemaps
-from googlemaps.exceptions import TransportError
+import exifread
 
-@st.cache_data
-def get_lat_long(rua, cidade):
-    address = ""
-    if rua:
-        address += rua + ', '
-    address += cidade
-    geolocator = Nominatim(user_agent="geo_app")
-    location = geolocator.geocode(address)
-    if location:
-        latitude = location.latitude
-        longitude = location.longitude
-        return latitude, longitude
-    else:
-        return None, None
 
-@st.cache_data
-def get_user_location():
-    location = None
+def latlong_for_address(lat, long, cont):
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    location = geolocator.reverse((lat, long), exactly_one=True)
     
-    try:
-        # Use a API de geolocalização do navegador para obter a localização
-        response = requests.get("https://ipinfo.io")
-        data = response.json()
+    if location is not None:
+        address = location.raw.get('address', {})
         
-        location = [
-            float(data.get("loc", "").split(",")[0]),
-            float(data.get("loc", "").split(",")[1])
-        ]
-    except Exception as e:
-        st.warning("Não foi possível obter a localização do usuário.")
-        st.warning(str(e))
+        # Primeiro, tente obter o nome da cidade
+        city = address.get('city', 'Cidade não encontrada')
+        country = address.get('country', 'Cidade não encontrada')
+        road = address.get('road', 'Cidade não encontrada')
+
+        
+        
+        if country == "Brasil":
+            return city, country, road        
+        if cont == 0:
+            lat = -lat
+            long = -long
+        elif cont == 1:
+            lat = -lat
+        else:
+            long = -long
+        
+        cont += 1
+        return latlong_for_address(lat, long, cont)
+    else:
+        return "Não foi possível encontrar o endereço."
     
-    return location
+    
+def extrair_lat_long(foto):
+    if foto is not None:
+        # Lê os metadados EXIF da foto
+        tags = exifread.process_file(foto)
 
+        # Verifica se as informações de GPS estão presentes
+        if 'GPS GPSLatitude' in tags and 'GPS GPSLongitude' in tags:
+            latitude = tags['GPS GPSLatitude'].values
+            longitude = tags['GPS GPSLongitude'].values
+            latitude_ref = tags['GPS GPSLatitudeRef'].values
+            longitude_ref = tags['GPS GPSLongitudeRef'].values
 
-def get_location_phone():
-    location = geocoder.ip('me')
-    return location
-print(get_location_phone())
+            # Converte as coordenadas de graus, minutos e segundos para graus decimais
+            latitude_decimal = float(latitude[0].num) / float(latitude[0].den) + \
+                               float(latitude[1].num) / float(latitude[1].den) / 60 + \
+                               float(latitude[2].num) / float(latitude[2].den) / 3600
+            longitude_decimal = float(longitude[0].num) / float(longitude[0].den) + \
+                                float(longitude[1].num) / float(longitude[1].den) / 60 + \
+                                float(longitude[2].num) / float(longitude[2].den) / 3600
 
-def get_location_details(lat, lng):
-    geolocator = Nominatim(user_agent="geoapp")
-    location = geolocator.reverse((lat, lng), exactly_one=True)
-    return location
+            # Ajusta as coordenadas com base na referência (N/S, E/W)
+            if latitude_ref == 'S':
+                latitude_decimal = -latitude_decimal
+            if longitude_ref == 'W':
+                longitude_decimal = -longitude_decimal
+
+            return latitude_decimal, longitude_decimal
+
+    return None, None
 
 def get_map(lat = -15.7801, lng = -47.9292):
     m = folium.Map(location=[lat, lng], zoom_start=14)
-    folium.Marker([lat, lng]).add_to(m)
+    folium.Marker([lat, lng]).add_to(m) 
     return m
 
 
-def get_locale_js():
     
-    gmaps = googlemaps.Client(key="AIzaSyDds1kIsXkgcg43pme6jvtceszBGpWAKRM")
-
-    try:
-        # Use a função de geolocalização para obter a sua localização atual
-        current_location = gmaps.geolocate()
-
-        # Extraia a latitude e a longitude da resposta
-        latitude = current_location['location']['lat']
-        longitude = current_location['location']['lng']
-
-        data = []
-        data.append(latitude)
-        data.append(longitude)
-        return data
-    
-    except TransportError as e:
-        print(f"Erro ao obter a localização: {e}")
-        return None
-
-        
-
-
-
 

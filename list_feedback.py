@@ -52,3 +52,4 @@ def list_feedback():
 
         else:
             st.warning('Nenhum dado encontrado!', icon="⚠️")
+list_feedback()

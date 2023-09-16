@@ -5,7 +5,12 @@ import psycopg2
 from db import insert_itens
 import datetime
 from predict import predict
-from get_location import obter_localizacao_da_foto, latlong_for_address
+from get_location import extrair_lat_long, latlong_for_address
+
+
+
+
+
 
 from streamlit_folium import folium_static
 
@@ -14,39 +19,54 @@ from streamlit_folium import folium_static
 def create_feedback():
     st.title("Cadastre Feedback de um Local")
 
-    fileupload = st.file_uploader("Foto do local", type=['png', 'jpg'])
+    foto = st.file_uploader("Faça o upload de uma foto", type=["jpg", "jpeg", "png"])
+    
+    
+    
+    
+    cidade = ""
+    pais = ""
+    rua = ""
+    if foto is not None:
+        with open(foto.name, "wb") as f:
+            f.write(foto.read())
+        st.image(foto.name, width=100)
+    if foto is not None:
+        lat, long = extrair_lat_long(foto)       
+
+        
+        cidade, pais, rua = latlong_for_address(lat, long, 0)
+        nome = st.text_input("Nome do local", "", placeholder="Praça da Sé")
+        opinion = st.text_area("Descreva sobre esse local", "", placeholder="Este local é...")
+        
+    
+   
+   
 
     
+    
+    today_data = datetime.date.today()
+    strDate = str(today_data.year) + "-" + str(today_data.month) + "-" + str(today_data.day)
 
-    if fileupload is not None:
-        with open(fileupload.name, "wb") as f:
-            f.write(fileupload.read())
-        st.image(fileupload.name, width=100)
 
-    cities = get_cities()
-   
-    cidade = st.selectbox("Cidade do Local", cities)
-    nome = st.text_input("Nome do local", "", placeholder="Praça da Sé")
-
-    today_data = st.date_input("Data que a foto foi tirada", datetime.date(2023, 8, 18))
-
-    rua = st.text_input("Rua", "", placeholder="Rua")
-    opinion = st.text_area("Descreva sobre esse local", "", placeholder="Este local é...")
-    cont = len(opinion)
+    
+  
 
     col1, col2, col3 = st.columns(3)
+    
     with col1:
-        locate = st.button("Obter Localização")        
+        if foto is not None:
+            submit = st.button("Enviar Feedback", )
+        else:
+            submit = st.button("Enviar Feedback", disabled=True)
     
-    with col2:
-        submit = st.button("Enviar Feedback")
-    
-    with col3:    
-        st.write("Quantidade de caracteres: ", cont)
+   
 
     
+    """  
     if locate:
-        latitude_to_map, longitude_to_map = get_lat_long(rua, cidade)
+        latitude_to_map = lat
+        longitude_to_map = long
         if latitude_to_map and longitude_to_map:
             st.session_state.latitude = latitude_to_map
             st.session_state.longitude = longitude_to_map
@@ -54,19 +74,19 @@ def create_feedback():
             st.session_state.show_warning = False
         else:
             st.warning('Não foi possivel obter a localização!', icon="⚠️")
-
+    """
     if submit:
-        if fileupload:
-            caminho = os.path.abspath(fileupload.name)
+        if foto:
+            caminho = os.path.abspath(foto.name)
             with open(caminho, 'rb') as img_file:
                 imagem_data = img_file.read()
 
             hash_img = psycopg2.Binary(imagem_data)
-            latitude, longitude = get_lat_long(rua or '', cidade)
             
-            if hash_img and (cidade or rua )and opinion and today_data and latitude and longitude:
+            
+            if hash_img and (cidade or rua )and opinion and today_data and lat and long:
                 sentiment = predict(opinion)
-                res = insert_itens(nome, hash_img, cidade, rua, opinion, sentiment.title(), str(today_data), latitude, longitude)
+                res = insert_itens(nome, hash_img, cidade, rua, opinion, sentiment.title(), str(today_data), lat, long)
 
                 if res:
                     st.success('Feedback enviado com sucesso!', icon="✅")
@@ -78,3 +98,5 @@ def create_feedback():
             os.remove(caminho)
         else:
             st.warning('Adicione uma imagem!', icon="⚠️")
+
+create_feedback()
