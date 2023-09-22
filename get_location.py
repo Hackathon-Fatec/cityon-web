@@ -6,7 +6,7 @@ import exifread
 
 
 def latlong_for_address(lat, long, cont):
-    geolocator = Nominatim(user_agent="geoapiExercises")
+    geolocator = Nominatim(user_agent="geopyexer")
     location = geolocator.reverse((lat, long), exactly_one=True)
     
     if location is not None:
@@ -69,6 +69,8 @@ def get_map(lat = -15.7801, lng = -47.9292):
     m = folium.Map(location=[lat, lng], zoom_start=14)
     folium.Marker([lat, lng]).add_to(m) 
     return m
+
+
 
 
     

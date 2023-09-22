@@ -1,6 +1,6 @@
 import streamlit as st
 import folium
-from get_location import get_user_location
+
 from streamlit_folium import folium_static
 from db import get_all_itens
 from folium import IFrame
@@ -13,9 +13,9 @@ markers = [{"lat": element[9], "lon": element[8], "info": element[5], "local": e
 
 def mapPlot():
     st.title("Plotagem dos feedbacks")
-    location = get_user_location()
-    lat = location[0] or -23.553720852012958
-    lng = location[1] or -46.657163972338864
+    
+    lat = -23.553720852012958
+    lng = -46.657163972338864
     # Create a Folium map object
     m = folium.Map(location=[lat,lng], zoom_start=12)
     

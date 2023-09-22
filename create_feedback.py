@@ -32,7 +32,9 @@ def create_feedback():
             f.write(foto.read())
         st.image(foto.name, width=100)
     if foto is not None:
-        lat, long = extrair_lat_long(foto)       
+        lat, long = extrair_lat_long(foto) 
+
+        print(lat, long)      
 
         
         cidade, pais, rua = latlong_for_address(lat, long, 0)
@@ -40,11 +42,7 @@ def create_feedback():
         opinion = st.text_area("Descreva sobre esse local", "", placeholder="Este local é...")
         
     
-   
-   
 
-    
-    
     today_data = datetime.date.today()
     strDate = str(today_data.year) + "-" + str(today_data.month) + "-" + str(today_data.day)
 
@@ -56,7 +54,7 @@ def create_feedback():
     
     with col1:
         if foto is not None:
-            submit = st.button("Enviar Feedback", )
+            submit = st.button("Enviar Feedback")
         else:
             submit = st.button("Enviar Feedback", disabled=True)
     

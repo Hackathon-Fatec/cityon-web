@@ -1,5 +1,5 @@
 import streamlit as st
-from get_location import get_locale_js
+
 
 
 def home():
@@ -39,8 +39,8 @@ def home():
 
     with col1:
         st.markdown(header, unsafe_allow_html=True)
-        data = get_locale_js()
-        st.write(data[0])
+       
+      
     with col2:
         st.markdown(text, unsafe_allow_html=True)
 
